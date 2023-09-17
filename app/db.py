@@ -63,13 +63,12 @@ class DB:
     def get_city_by_id(self, city_id: int) -> schemas.City:
         city_res = self.cur.execute(
             f"SELECT city_id, region_id, name FROM cities WHERE city_id={city_id}")
-        resp = city_res.fetchall()
-        answer = schemas.City(
-            city_id=resp[0], region_id=resp[1], city_name=resp[2])
+        resp = city_res.fetchall()[0]
         region_res = self.cur.execute(
-            f"SELECT name FROM regions WHERE region_id={answer.region_id}")
-        resp = city_res.fetchall()
-        answer.region_name = resp[0]
+            f"SELECT name FROM regions WHERE region_id={resp[1]}")
+        resp_region = city_res.fetchall()
+        answer = schemas.City(
+            city_id=resp[0], region_id=resp[1], city_name=resp[2], region_name=resp_region[0] )
         return answer
 
     def add_city(self, region_id: int, name: str) -> schemas.CityID:
@@ -229,4 +228,7 @@ class DB:
         res = self.cur.execute("SELECT image_id FROM images ORDER BY image_id DESC LIMIT 1")
         return schemas.ImageID(image_id=res.fetchone()[0])
     
+    def get_extension(self, image_id: int) -> str:
+        res = self.cur.execute(f"SELECT extension FROM images WHERE image_id={image_id}")
+        return res.fetchall()[0][0]
     

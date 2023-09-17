@@ -114,4 +114,6 @@ async def add_image(file: UploadFile) -> schemas.ImageID:
 
 @app.get(prefics + "/image/{image_id}", tags=["Image"])
 async def get_image(image_id: int):
-    pass
+    extension = database.get_extension(image_id)
+    return FileResponse(path=f'images/{image_id}.{extension}', filename='image.{extension}',
+                        media_type="multipart/form-data")
