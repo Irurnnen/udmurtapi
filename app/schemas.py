@@ -66,7 +66,7 @@ class Place(BaseModel):
 
 class AddPlace(BaseModel):
     title: str
-    city_id: str
+    city_id: int
     image_id: int
     youtube_link: str
     content: str
@@ -76,3 +76,7 @@ class AddPlace(BaseModel):
 
 class PlaceID(BaseModel):
     place_id: int
+
+
+class ImageID(BaseModel):
+    image_id: int

@@ -52,7 +52,7 @@ class DB:
         return schemas.NewsID(news_id=res.fetchone()[0])
 
     def get_news_by_id(self, news_id: int) -> schemas.NewsID:
-        res = self.cur.execute(f"SELECT * FROM news WHERE news_id={news_id}")
+        res = self.cur.execute(f"SELECT * FROM news WHERE news_id={news_id} LIMIT 1")
         resp = res.fetchall()[0]
         answer = schemas.News(news_id=resp[0], title=resp[1],
                               image_id=resp[2], timestamp=resp[3], content=resp[4])
@@ -82,7 +82,7 @@ class DB:
 
     def get_all_cities(self) -> list[schemas.City]:
         res = self.cur.execute(
-            f"SELECT (city_id, region_id, name) FROM cities ORDER BY city_id DESC")
+            f"SELECT city_id, region_id, name FROM cities ORDER BY city_id DESC")
         answer = list()
         for row in res.fetchall():
             region_res = self.cur.execute(
@@ -96,10 +96,10 @@ class DB:
 
     def get_cities_by_region_ID(self, region_id: int) -> list[schemas.City]:
         res = self.cur.execute(
-            f"SELECT name from regions WHERE region_id={region_id}")
-        region_name = res.fetchall()[0]
+            f"SELECT name FROM regions WHERE region_id={region_id}")
+        region_name = res.fetchall()[0][0]
         res = self.cur.execute(
-            f"SELECT (city_id, name) FROM cities WHERE region_id={region_id}")
+            f"SELECT city_id, name FROM cities WHERE region_id={region_id}")
         answer = list()
         for row in res.fetchall():
             answer.append(schemas.City(city_id=row[0], region_id=region_id,
@@ -108,9 +108,9 @@ class DB:
 
     def get_region_by_ID(self, region_id: int) -> schemas.Region:
         res = self.cur.execute(
-            f"SELECT name from regions WHERE region_id={region_id}")
+            f"SELECT name from regions WHERE region_id={region_id} LIMIT 1")
         answer = schemas.Region(region_id=region_id,
-                                region_name=res.fetchall()[0])
+                                region_name=res.fetchall()[0][0])
         return answer
 
     def post_region(self, region_name: str) -> schemas.Region:
@@ -123,10 +123,11 @@ class DB:
 
     def get_all_regions(self) -> list[schemas.Region]:
         res = self.cur.execute(
-            f"SELECT (region_id, name) from regions WHERE ORDER BY region_id DESC")
+            f"SELECT region_id, name from regions ORDER BY region_id DESC")
         answer = list()
         for row in res.fetchall():
-            answer.appen(schemas.Region(region_id=row[0], region_name=row[1]))
+            print(row)
+            answer.append(schemas.Region(region_id=row[0], region_name=row[1]))
         return answer
 
     ################    Place    ################
@@ -146,8 +147,8 @@ class DB:
 
     def get_places(self, count: int, offset: int) -> list[schemas.Place]:
         res = self.cur.execute(
-            f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-             content, latitude, longitude) FROM places 
+            f"""SELECT place_id, title, city_id, image_id, youtube_id,
+             content, latitude, longitude FROM places 
             ORDER BY place_id DESC LIMIT {count} OFFSET {offset}""")
         answer = list()
 
@@ -161,9 +162,9 @@ class DB:
 
     def get_places_by_city_id(self, city_id: int, count: int, offset: int) -> schemas.Place:
         res = self.cur.execute(
-            f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-            content, latitude, longitude) FROM places WHERE city_id="{city_id}"
-            ORDER BY placy_id DESC LIMIT {count} OFFSET {offset}""")
+            f"""SELECT place_id, title, city_id, image_id, youtube_id,
+            content, latitude, longitude FROM places WHERE city_id="{city_id}"
+            ORDER BY place_id DESC LIMIT {count} OFFSET {offset}""")
 
         answer = list()
         for row in res.fetchall():
@@ -178,8 +179,8 @@ class DB:
         answer = list()
         for city in cities:
             res = self.cur.execute(
-                f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-                content, latitude, longitude) FROM places WHERE 
+                f"""SELECT place_id, title, city_id, image_id, youtube_id,
+                content, latitude, longitude FROM places WHERE 
                 city_id={city.city_id} ORDER BY place_id DESC LIMIT {count}
                 OFFSET {offset}""")
             for row in res.fetchall():
@@ -191,8 +192,8 @@ class DB:
 
     def get_all_places(self) -> list[schemas.Place]:
         res = self.cur.execute(
-            f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-             content, latitude, longitude) FROM places 
+            f"""SELECT place_id, title, city_id, image_id, youtube_id,
+             content, latitude, longitude FROM places 
             ORDER BY place_id DESC""")
 
         answer = list()
@@ -205,8 +206,8 @@ class DB:
 
     def get_place_by_id(self, place_id: int) -> schemas.Place:
         res = self.cur.execute(
-            f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-             content, latitude, longitude) FROM places WHERE place_id={place_id}""")
+            f"""SELECT place_id, title, city_id, image_id, youtube_id,
+             content, latitude, longitude FROM places WHERE place_id={place_id}""")
 
         row = res.fetchall()[0]
         return schemas.Place(place_id=row[0], title=row[1], city_id=row[2], 
@@ -220,3 +221,6 @@ class DB:
         res = self.cur.execute(
             f"SELECT user_id FROM user ORDER BY user_id DESC LIMIT 1")
         return schemas.CityID(news_id=res.fetchone()[0])
+    
+    def add_image(self) -> schemas.ImageID:
+        res = self.cur.execute(f"INSERT INTO images (image_id) VALUES (Null)")

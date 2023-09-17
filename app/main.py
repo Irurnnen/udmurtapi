@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, Depends
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import FileResponse
 from typing import Annotated
 
 from app.db import DB
@@ -13,9 +14,9 @@ prefics = '/v1'
 
 
 # News
+# TODO: token: Annotated[str, Depends(oauth2_scheme)]
 @app.post(prefics + "/news/add", tags=["News"])
-async def post_news(add_news: schemas.AddNews, 
-                    token: Annotated[str, Depends(oauth2_scheme)]) -> schemas.NewsID:
+async def post_news(add_news: schemas.AddNews) -> schemas.NewsID:
     return database.post_news(add_news.title, add_news.image_id, add_news.content)
 
 
@@ -62,6 +63,9 @@ async def get_all_cities() -> list[schemas.City]:
 async def add_region(addRegion: schemas.AddRegion) -> schemas.Region:
     return database.post_region(addRegion.region_name)
 
+@app.get(prefics + "/region/all", tags=["Region"])
+async def get_all_regions() -> list[schemas.Region]:
+    return database.get_all_regions()
 
 @app.get(prefics + "/region/{region_id}/cities", tags=["Region"])
 async def get_cities_by_region_ID(region_id: int) -> list[schemas.City]:
@@ -72,9 +76,6 @@ async def get_cities_by_region_ID(region_id: int) -> list[schemas.City]:
 async def get_region_by_ID(region_id: int) -> schemas.Region:
     return database.get_region_by_ID(region_id)
 
-@app.get(prefics + "/region/all", tags=["Region"])
-async def get_all_regions() -> list[schemas.Region]:
-    return database.get_all_regions()
 
 # Places
 @app.post(prefics + "/place/add", tags=["Place"])
@@ -105,5 +106,10 @@ async def get_place_by_id(place_id) -> schemas.Place:
 
 
 @app.post(prefics + "/image/add", tags=["Image"])
-async def add_image(file: Annotated[bytes, File()]):
-    return {'file_size': len(file)}
+async def add_image(file: UploadFile):
+    
+    return 
+
+@app.get(prefics + "/image/{image_id}", tags=["Image"])
+async def get_image(image_id: int):
+    pass
