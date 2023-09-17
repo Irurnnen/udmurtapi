@@ -4,8 +4,8 @@ services:
   udmurtapi:
     build: .
     container_name: udmapi
-    # command: py bootstrap.py && uvicorn app.main:app --host 0.0.0.0 --port 2180
-    command: uvicorn app.main:app --host 0.0.0.0 --port 2180
+    # command: ls && uvicorn app.main:app --host 0.0.0.0 --port 2180
+    command: bash bootstrap.sh && uvicorn app.main:app --host 0.0.0.0 --port 2180
     volumes:
       - ./images:/code/images
       - ./data:/code/data

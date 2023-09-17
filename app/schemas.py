@@ -1,24 +1,78 @@
 from pydantic import BaseModel
 
 
+class CreateUser(BaseModel):
+    login: str
+    password: str
+
+
+class UserID(BaseModel):
+    user_id: int
+
+
+class Region(BaseModel):
+    region_id: int
+    region_name: str
+
+
+class AddRegion(BaseModel):
+    region_name: str
+
+
+class City(BaseModel):
+    city_id: int
+    region_id: int
+    region_name: str
+    city_name: str
+
+
+class AddCity(BaseModel):
+    city_name: str
+    region_id: int
+
+
+class CityID(BaseModel):
+    city_id: int
+
+
 class News(BaseModel):
+    news_id: int
     image_id: int
     title: str
     timestamp: int
     content: str
 
 
-class Place(BaseModel):
+class NewsID(BaseModel):
+    news_id: int
+
+
+class AddNews(BaseModel):
+    image_id: int
     title: str
-    region_id: int
-    city_id: int
-    youtube_id: str
-    images_id: int
     content: str
 
 
-class CardPlace(BaseModel):
+class Place(BaseModel):
+    place_id: int
     title: str
-    image_id: int
     city_id: int
-    query_content: str
+    image_id: int
+    youtube_id: str
+    content: str
+    latitude: float
+    longitude: float
+
+
+class AddPlace(BaseModel):
+    title: str
+    city_id: str
+    image_id: int
+    youtube_link: str
+    content: str
+    latitude: float
+    longitude: float
+
+
+class PlaceID(BaseModel):
+    place_id: int
