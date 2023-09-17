@@ -102,7 +102,7 @@ async def get_all_places() -> list[schemas.Place]:
 
 @app.get(prefics + "/place/{place_id}", tags=["Place"])
 async def get_place_by_id(place_id) -> schemas.PlaceImages:
-
+    
     return database.get_place_by_id(place_id)
 
 

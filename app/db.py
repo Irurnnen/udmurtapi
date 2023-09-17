@@ -150,10 +150,12 @@ class DB:
              content, latitude, longitude FROM places 
             ORDER BY place_id DESC LIMIT {count} OFFSET {offset}""")
         answer = list()
-
         for row in res.fetchall():
+            res_images = self.cur.execute(
+                f"""SELECT image_id FROM places_and_images WHERE place_id={row[0]}""")
+            image_id = res_images.fetchall()[0][0]
             answer.append(schemas.Place(place_id=row[0], title=row[1],
-                                        city_id=row[2], image_id=row[3],
+                                        city_id=row[2], image_id=image_id,
                                         youtube_id=row[4], content=row[5],
                                         latitude=row[6], longitude=row[7]))
 
@@ -167,8 +169,11 @@ class DB:
 
         answer = list()
         for row in res.fetchall():
+            res_images = self.cur.execute(
+                f"""SELECT image_id FROM places_and_images WHERE place_id={row[0]}""")
+            image_id = res_images.fetchall()[0][0]
             answer.append(schemas.Place(place_id=row[0], title=row[1],
-                                        city_id=row[2], image_id=row[3],
+                                        city_id=row[2], image_id=image_id,
                                         youtube_id=row[4], content=row[5],
                                         latitude=row[6], longitude=row[7]))
         return answer
@@ -183,8 +188,11 @@ class DB:
                 city_id={city.city_id} ORDER BY place_id DESC LIMIT {count}
                 OFFSET {offset}""")
             for row in res.fetchall():
+                res_images = self.cur.execute(f"""SELECT image_id FROM 
+                                places_and_images WHERE place_id={row[0]}""")
+                image_id = res_images.fetchall()[0][0]
                 answer.append(schemas.Place(place_id=row[0], title=row[1],
-                                            city_id=row[2], image_id=row[3],
+                                            city_id=row[2], image_id=image_id,
                                             youtube_id=row[4], content=row[5],
                                             latitude=row[6], longitude=row[7]))
         return answer
@@ -211,7 +219,6 @@ class DB:
         res_images = self.cur.execute(
             f"""SELECT image_id FROM places_and_images WHERE place_id={place_id}""")
         images = [row[0] for row in res_images.fetchall()]
-        print(images)
         return schemas.PlaceImages(place_id=row[0], title=row[1], city_id=row[2], 
                              image_id=row[3], youtube_id=row[4], content=row[5], 
                              latitude=row[6], longitude=row[7], images_id=images)
