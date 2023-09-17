@@ -74,7 +74,7 @@ class DB:
 
     def add_city(self, region_id: int, name: str) -> schemas.CityID:
         res = self.cur.execute(
-            f"INSERT INTO cities (region_id, name) VALUES ({region_id}, {name})")
+            f"""INSERT INTO cities (region_id, name) VALUES ({region_id}, "{name}")""")
         self.con.commit()
         res = self.cur.execute(
             f"SELECT city_id FROM cities ORDER BY cuty_id DESC LIMIT 1")
@@ -115,11 +115,11 @@ class DB:
 
     def post_region(self, region_name: str) -> schemas.Region:
         res = self.cur.execute(
-            f"INSERT INTO regions (name) VALUES {region_name})")
+            f"""INSERT INTO regions (name) VALUES ("{region_name}")""")
         self.con.commit()
         res = self.cur.execute(
             f"SELECT region_id FROM regions ORDER BY region_id DESC LIMIT 1")
-        return schemas.CityID(news_id=res.fetchone()[0])
+        return schemas.Region(region_id=res.fetchone()[0], region_name=region_name)
 
     def get_all_regions(self) -> list[schemas.Region]:
         res = self.cur.execute(
@@ -137,8 +137,8 @@ class DB:
         youtube_id = re.search(YOUTUBE_ID_PATTERN, youtube_link)[0]
         res = self.cur.execute(
             f"""INSERT INTO place (title, city_id, image_id, youtube_id, 
-            content, latitude, longitude) VALUES ({title}, {city_id}, 
-            {image_id}, {youtube_id}, {content}, {latitude}, {longitude})""")
+            content, latitude, longitude) VALUES ("{title}", {city_id}, 
+            {image_id}, "{youtube_id}", "{content}", {latitude}, {longitude})""")
         self.con.commit()
         res = self.cur.execute(
             f"SELECT place_id FROM place ORDER BY place_id DESC LIMIT 1")
