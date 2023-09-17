@@ -85,10 +85,10 @@ class DB:
         answer = list()
         for row in res.fetchall():
             region_res = self.cur.execute(
-                f"SELECT name FROM regions WHERE region_id={answer[1]}")
-            region_name = region_res.fetchall()[0]
+                f"SELECT name FROM regions WHERE region_id={row[1]}")
+            region_name = region_res.fetchall()[0][0]
             answer.append(schemas.City(city_id=row[0], region_id=row[1],
-                                       region_name=region_name, city_name=row[1]))
+                                       region_name=region_name, city_name=row[2]))
         return answer
     
     ################    Region    ################
@@ -213,15 +213,15 @@ class DB:
 
     def get_place_by_id(self, place_id: int) -> schemas.PlaceImages:
         res = self.cur.execute(
-            f"""SELECT place_id, title, city_id, image_id, youtube_id,
+            f"""SELECT place_id, title, city_id, youtube_id,
              content, latitude, longitude FROM places WHERE place_id={place_id}""")
         row = res.fetchall()[0]
         res_images = self.cur.execute(
             f"""SELECT image_id FROM places_and_images WHERE place_id={place_id}""")
         images = [row[0] for row in res_images.fetchall()]
         return schemas.PlaceImages(place_id=row[0], title=row[1], city_id=row[2], 
-                             image_id=row[3], youtube_id=row[4], content=row[5], 
-                             latitude=row[6], longitude=row[7], images_id=images)
+                             youtube_id=row[3], content=row[4], 
+                             latitude=row[5], longitude=row[6], images_id=images)
 
     def add_user(self, login: str, password: str) -> schemas.UserID:
         res = self.cur.execute(f"""INSERT INTO user (login, password) VALUES ("{login}", "{password}")""")

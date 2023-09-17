@@ -68,7 +68,6 @@ class PlaceImages(BaseModel):
     place_id: int
     title: str
     city_id: int
-    image_id: int | None = None
     youtube_id: str
     content: str
     latitude: float

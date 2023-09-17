@@ -49,14 +49,14 @@ async def add_user(createUser: schemas.CreateUser) -> schemas.UserID:
 async def add_new_city(addCity: schemas.AddCity) -> schemas.CityID:
     return database.add_city(addCity.region_id, addCity.city_name)
 
+@app.get(prefics + "/city/all", tags=["City"])
+async def get_all_cities() -> list[schemas.City]:
+    return database.get_all_cities()
 
 @app.get(prefics + "/city/{city_id}", tags=["City"])
 async def get_city_by_ID(city_id: int) -> schemas.City:
     return database.get_city_by_id(city_id)
 
-@app.get(prefics + "/city/all", tags=["City"])
-async def get_all_cities() -> list[schemas.City]:
-    return database.get_all_cities()
 
 # Regions
 @app.post(prefics + "/region/add", tags=["Region"])
