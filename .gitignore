@@ -1,3 +1,4 @@
 data/*.db
 images/
 init.complete
+.vscode/

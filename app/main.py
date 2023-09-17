@@ -70,7 +70,7 @@ async def get_cities_by_region_ID(region_id: int) -> list[schemas.City]:
 async def get_region_by_ID(region_id: int) -> schemas.Region:
     return database.get_region_by_ID(region_id)
 
-@app.get(prefics, "/region/all", tags=["Region"])
+@app.get(prefics + "/region/all", tags=["Region"])
 async def get_all_regions() -> list[schemas.Region]:
     return database.get_all_regions()
 
