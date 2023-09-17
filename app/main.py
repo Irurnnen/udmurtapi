@@ -81,7 +81,7 @@ async def get_region_by_ID(region_id: int) -> schemas.Region:
 @app.post(prefics + "/place/add", tags=["Place"])
 async def add_place(addPlace: schemas.AddPlace) -> schemas.PlaceID:
     return database.add_place(addPlace.title, addPlace.city_id, addPlace.youtube_link,
-                              addPlace.image_id, addPlace.content, addPlace.latitude, 
+                              addPlace.content, addPlace.latitude, 
                               addPlace.longitude) 
 
 
@@ -102,7 +102,7 @@ async def get_all_places() -> list[schemas.Place]:
 
 @app.get(prefics + "/place/{place_id}", tags=["Place"])
 async def get_place_by_id(place_id) -> schemas.PlaceImages:
-    
+
     return database.get_place_by_id(place_id)
 
 

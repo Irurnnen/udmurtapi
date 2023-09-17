@@ -34,11 +34,12 @@ CREATE TABLE IF NOT EXISTS news (
     content MEDIUMTEXT
 );
 
+DROP TABLE places;
+
 CREATE TABLE IF NOT EXISTS places (
     place_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TINYTEXT NOT NULL,
     city_id INTEGER NOT NULL,
-    image_id INTEGER NOT NULL,
     youtube_id VARCHAR(128),
     latitude DOUBLE NOT NULL,
     longitude DOUBLE NOT NULL,
