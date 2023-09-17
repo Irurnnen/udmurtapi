@@ -66,7 +66,7 @@ class DB:
         resp = city_res.fetchall()[0]
         region_res = self.cur.execute(
             f"SELECT name FROM regions WHERE region_id={resp[1]}")
-        resp_region = city_res.fetchall()
+        resp_region = city_res.fetchall()[0]
         answer = schemas.City(
             city_id=resp[0], region_id=resp[1], city_name=resp[2], region_name=resp_region[0] )
         return answer
