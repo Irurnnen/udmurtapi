@@ -1,4 +1,5 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Depends
+from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 
 from app.db import DB
@@ -6,14 +7,15 @@ from app import schemas
 
 
 app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
 database = DB()
 prefics = '/v1'
 
 
 # News
 @app.post(prefics + "/news/add", tags=["News"])
-async def post_news(add_news: schemas.AddNews) -> schemas.NewsID:
-    print(1)
+async def post_news(add_news: schemas.AddNews, 
+                    token: Annotated[str, Depends(oauth2_scheme)]) -> schemas.NewsID:
     return database.post_news(add_news.title, add_news.image_id, add_news.content)
 
 
