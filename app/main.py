@@ -106,11 +106,14 @@ async def get_place_by_id(place_id) -> schemas.Place:
 
 
 @app.post(prefics + "/image/add", tags=["Image"])
-async def add_image(file: UploadFile) -> schemas.ImageID:
-    ImageID = database.add_image(file.filename.split(".")[-1])
-    with open(f'images/{ImageID.image_id}.{file.filename.split(".")[-1]}', 'wb') as image:
-        image.write(file.file.read())
-    return ImageID
+async def add_image(files: list[UploadFile]) -> list[schemas.ImageID]:
+    ImagesID = list()
+    for file in files:
+        ImagesID.append(database.add_image(file.filename.split(".")[-1]))
+        with open(f'images/{ImagesID[-1].image_id}.{file.filename.split(".")[-1]}', 'wb') as image:
+            image.write(file.file.read())
+    return ImagesID
+
 
 @app.get(prefics + "/image/{image_id}", tags=["Image"])
 async def get_image(image_id: int):
