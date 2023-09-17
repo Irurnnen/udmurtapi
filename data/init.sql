@@ -1,0 +1,36 @@
+CREATE TABLE images (
+    image_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    place_id INTEGER
+);
+
+CREATE TABLE user (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    login VARCHAR(127) NOT NULL,
+    password BLOB(64) NOT NULL
+);
+
+CREATE TABLE regions (
+    region_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE citis (
+    city_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    region_id INTEGER NOT NULL,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE news (
+    news_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TINYTEXT NOT NULL,
+    image_id NOT NULL,
+    creation_time TIMESTAMP NOT NULL,
+    content MEDIUMTEXT
+);
+
+CREATE TABLE place (
+    place_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TINYTEXT NOT NULL,
+    city_id INTEGER NOT NULL,
+    content MEDIUMTEXT
+);
