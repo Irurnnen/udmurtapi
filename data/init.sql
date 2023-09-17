@@ -35,6 +35,6 @@ CREATE TABLE IF NOT EXISTS places (
     image_id INTEGER NOT NULL,
     youtube_id VARCHAR(128),
     latitude DOUBLE NOT NULL,
-    longitutde DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL,
     content MEDIUMTEXT
 );

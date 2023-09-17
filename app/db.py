@@ -62,7 +62,7 @@ class DB:
 
     def get_city_by_id(self, city_id: int) -> schemas.City:
         city_res = self.cur.execute(
-            f"SELECT city_id, region_id, name FROM cities WHERE city_id = {city_id}")
+            f"SELECT city_id, region_id, name FROM cities WHERE city_id={city_id}")
         resp = city_res.fetchall()
         answer = schemas.City(
             city_id=resp[0], region_id=resp[1], city_name=resp[2])
@@ -77,8 +77,8 @@ class DB:
             f"""INSERT INTO cities (region_id, name) VALUES ({region_id}, "{name}")""")
         self.con.commit()
         res = self.cur.execute(
-            f"SELECT city_id FROM cities ORDER BY cuty_id DESC LIMIT 1")
-        return schemas.CityID(news_id=res.fetchone()[0])
+            f"SELECT city_id FROM cities ORDER BY city_id DESC LIMIT 1")
+        return schemas.CityID(city_id=res.fetchone()[0])
 
     def get_all_cities(self) -> list[schemas.City]:
         res = self.cur.execute(
@@ -136,12 +136,12 @@ class DB:
                         longitude: float) -> schemas.PlaceID:
         youtube_id = re.search(YOUTUBE_ID_PATTERN, youtube_link)[0]
         res = self.cur.execute(
-            f"""INSERT INTO place (title, city_id, image_id, youtube_id, 
+            f"""INSERT INTO places (title, city_id, image_id, youtube_id, 
             content, latitude, longitude) VALUES ("{title}", {city_id}, 
             {image_id}, "{youtube_id}", "{content}", {latitude}, {longitude})""")
         self.con.commit()
         res = self.cur.execute(
-            f"SELECT place_id FROM place ORDER BY place_id DESC LIMIT 1")
+            f"SELECT place_id FROM places ORDER BY place_id DESC LIMIT 1")
         return schemas.PlaceID(place_id=res.fetchone()[0])
 
     def get_places(self, count: int, offset: int) -> list[schemas.Place]:
@@ -162,7 +162,7 @@ class DB:
     def get_places_by_city_id(self, city_id: int, count: int, offset: int) -> schemas.Place:
         res = self.cur.execute(
             f"""SELECT (place_id, title, city_id, image_id, youtube_id,
-            content, latitude, longitude) FROM places WHERE city_id={city_id}
+            content, latitude, longitude) FROM places WHERE city_id="{city_id}"
             ORDER BY placy_id DESC LIMIT {count} OFFSET {offset}""")
 
         answer = list()
