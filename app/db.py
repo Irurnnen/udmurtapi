@@ -80,6 +80,18 @@ class DB:
             f"SELECT city_id FROM cities ORDER BY cuty_id DESC LIMIT 1")
         return schemas.CityID(news_id=res.fetchone()[0])
 
+    def get_all_cities(self) -> list[schemas.City]:
+        res = self.cur.execute(
+            f"SELECT (city_id, region_id, name) FROM cities ORDER BY city_id DESC")
+        answer = list()
+        for row in res.fetchall():
+            region_res = self.cur.execute(
+                f"SELECT name FROM regions WHERE region_id={answer[1]}")
+            region_name = region_res.fetchall()[0]
+            answer.append(schemas.City(city_id=row[0], region_id=row[1],
+                                       region_name=region_name, city_name=row[1]))
+        return answer
+    
     ################    Region    ################
 
     def get_cities_by_region_ID(self, region_id: int) -> list[schemas.City]:
@@ -108,6 +120,14 @@ class DB:
         res = self.cur.execute(
             f"SELECT region_id FROM regions ORDER BY region_id DESC LIMIT 1")
         return schemas.CityID(news_id=res.fetchone()[0])
+
+    def get_all_regions(self) -> list[schemas.Region]:
+        res = self.cur.execute(
+            f"SELECT (region_id, name) from regions WHERE ORDER BY region_id DESC")
+        answer = list()
+        for row in res.fetchall():
+            answer.appen(schemas.Region(region_id=row[0], region_name=row[1]))
+        return answer
 
     ################    Place    ################
 
@@ -194,4 +214,9 @@ class DB:
                              latitude=row[6], longitude=row[7])
 
     def add_user(self, login: str, password: str) -> schemas.UserID:
-        pass
+        res = self.cur.execute(f"""INSERT INTO user (login, password) VALUES ("{login}", "{password}")""")
+        self.con.commit()
+        
+        res = self.cur.execute(
+            f"SELECT user_id FROM user ORDER BY user_id DESC LIMIT 1")
+        return schemas.CityID(news_id=res.fetchone()[0])

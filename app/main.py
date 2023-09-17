@@ -1,26 +1,8 @@
-from os import listdir
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
+from typing import Annotated
 
 from app.db import DB
 from app import schemas
-
-tags_metadata = [
-    {
-        "name": "News"
-    },
-    {
-        "name": "Region"
-    },
-    {
-        "name": "City"
-    },
-    {
-        "name": "User"
-    },
-    {
-        "name": "Place"
-    },
-]
 
 
 app = FastAPI()
@@ -69,6 +51,9 @@ async def add_new_city(addCity: schemas.AddCity) -> schemas.CityID:
 async def get_city_by_ID(city_id: int) -> schemas.City:
     return database.get_city_by_id(city_id)
 
+@app.get(prefics + "/city/all", tags=["City"])
+async def get_all_cities() -> list[schemas.City]:
+    return database.get_all_cities()
 
 # Regions
 @app.post(prefics + "/region/add", tags=["Region"])
@@ -85,6 +70,9 @@ async def get_cities_by_region_ID(region_id: int) -> list[schemas.City]:
 async def get_region_by_ID(region_id: int) -> schemas.Region:
     return database.get_region_by_ID(region_id)
 
+@app.get(prefics, "/region/all", tags=["Region"])
+async def get_all_regions() -> list[schemas.Region]:
+    return database.get_all_regions()
 
 # Places
 @app.post(prefics + "/place/add", tags=["Place"])
@@ -112,3 +100,8 @@ async def get_all_places() -> list[schemas.Place]:
 @app.get(prefics + "/place/{place_id}", tags=["Place"])
 async def get_place_by_id(place_id) -> schemas.Place:
     return database.get_place_by_id(place_id)
+
+
+@app.post(prefics + "/image/add", tags=["Image"])
+async def add_image(file: Annotated[bytes, File()]):
+    return {'file_size': len(file)}
