@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS images (
     image_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    extension VARCHAR(10) NOT NULL,
     place_id INTEGER
 );
 

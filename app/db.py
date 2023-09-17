@@ -222,5 +222,11 @@ class DB:
             f"SELECT user_id FROM user ORDER BY user_id DESC LIMIT 1")
         return schemas.CityID(news_id=res.fetchone()[0])
     
-    def add_image(self) -> schemas.ImageID:
-        res = self.cur.execute(f"INSERT INTO images (image_id) VALUES (Null)")
+    def add_image(self, extension: str) -> schemas.ImageID:
+        res = self.cur.execute(f"""INSERT INTO images (extension) VALUES ("{extension}")""")
+        self.con.commit()
+
+        res = self.cur.execute("SELECT image_id FROM images ORDER BY image_id DESC LIMIT 1")
+        return schemas.ImageID(image_id=res.fetchone()[0])
+    
+    

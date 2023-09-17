@@ -80,3 +80,6 @@ class PlaceID(BaseModel):
 
 class ImageID(BaseModel):
     image_id: int
+
+class AddImage(BaseModel):
+    extension: str
