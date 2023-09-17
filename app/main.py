@@ -101,17 +101,20 @@ async def get_all_places() -> list[schemas.Place]:
 
 
 @app.get(prefics + "/place/{place_id}", tags=["Place"])
-async def get_place_by_id(place_id) -> schemas.Place:
+async def get_place_by_id(place_id) -> schemas.PlaceImages:
+
     return database.get_place_by_id(place_id)
 
 
 @app.post(prefics + "/image/add", tags=["Image"])
-async def add_image(files: list[UploadFile]) -> list[schemas.ImageID]:
+async def add_image(files: list[UploadFile], place_id: int = 0) -> list[schemas.ImageID]:
     ImagesID = list()
     for file in files:
         ImagesID.append(database.add_image(file.filename.split(".")[-1]))
         with open(f'images/{ImagesID[-1].image_id}.{file.filename.split(".")[-1]}', 'wb') as image:
             image.write(file.file.read())
+        if place_id != 0:
+            database.place_and_images(place_id, ImagesID[-1].image_id)
     return ImagesID
 
 
@@ -120,3 +123,4 @@ async def get_image(image_id: int):
     extension = database.get_extension(image_id)
     return FileResponse(path=f'images/{image_id}.{extension}', filename='image.{extension}',
                         media_type="multipart/form-data")
+

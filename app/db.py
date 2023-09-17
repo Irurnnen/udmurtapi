@@ -203,15 +203,18 @@ class DB:
                                         latitude=row[6], longitude=row[7]))
         return answer
 
-    def get_place_by_id(self, place_id: int) -> schemas.Place:
+    def get_place_by_id(self, place_id: int) -> schemas.PlaceImages:
         res = self.cur.execute(
             f"""SELECT place_id, title, city_id, image_id, youtube_id,
              content, latitude, longitude FROM places WHERE place_id={place_id}""")
-
         row = res.fetchall()[0]
-        return schemas.Place(place_id=row[0], title=row[1], city_id=row[2], 
+        res_images = self.cur.execute(
+            f"""SELECT image_id FROM places_and_images WHERE place_id={place_id}""")
+        images = [row[0] for row in res_images.fetchall()]
+        print(images)
+        return schemas.PlaceImages(place_id=row[0], title=row[1], city_id=row[2], 
                              image_id=row[3], youtube_id=row[4], content=row[5], 
-                             latitude=row[6], longitude=row[7])
+                             latitude=row[6], longitude=row[7], images_id=images)
 
     def add_user(self, login: str, password: str) -> schemas.UserID:
         res = self.cur.execute(f"""INSERT INTO user (login, password) VALUES ("{login}", "{password}")""")
@@ -232,3 +235,7 @@ class DB:
         res = self.cur.execute(f"SELECT extension FROM images WHERE image_id={image_id}")
         return res.fetchall()[0][0]
     
+    def place_and_images(self, place_id: int, image_id: int) -> None:
+        res = self.cur.execute(f"""INSERT INTO places_and_images (place_id, image_id) 
+                               VALUES ({place_id}, {image_id})""")
+        return

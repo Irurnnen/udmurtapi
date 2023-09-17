@@ -4,6 +4,11 @@ CREATE TABLE IF NOT EXISTS images (
     place_id INTEGER
 );
 
+CREATE TABLE IF NOT EXISTS places_and_images (
+    place_id INTEGER NOT NULL,
+    image_id INTEGER NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS user (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     login VARCHAR(127) NOT NULL,

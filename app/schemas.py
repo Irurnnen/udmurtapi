@@ -64,6 +64,18 @@ class Place(BaseModel):
     longitude: float
 
 
+class PlaceImages(BaseModel):
+    place_id: int
+    title: str
+    city_id: int
+    image_id: int
+    youtube_id: str
+    content: str
+    latitude: float
+    longitude: float
+    images_id: list[int]
+
+
 class AddPlace(BaseModel):
     title: str
     city_id: int
