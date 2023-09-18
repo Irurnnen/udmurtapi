@@ -25,7 +25,6 @@ class DB:
     ################    NEWS    ################
 
     def get_news(self, count: int, offset: int) -> list[schemas.News]:
-        print(2)
         res = self.cur.execute("""SELECT * FROM news ORDER BY news_id DESC
                                 LIMIT ? OFFSET ?""", (count, offset))
         answer = list()
@@ -44,16 +43,16 @@ class DB:
 
     def post_news(self, title: str, image_id: int, content: str) -> schemas.NewsID:
         res = self.cur.execute("""INSERT INTO news (title, image_id, creation_time,
-                               content) VALUES ("{title}", {image_id}, {int(time())},
-                               "{content}")""", (title, image_id, int(time()), content))
+                               content) VALUES (?, ?, ?, ?)""",
+                               (title, image_id, int(time()), content))
         self.con.commit()
         res = self.cur.execute("""SELECT news_id FROM news
                                 ORDER BY news_id DESC LIMIT 1""")
         return schemas.NewsID(news_id=res.fetchone()[0])
 
     def get_news_by_id(self, news_id: int) -> schemas.NewsID:
-        res = self.cur.execute("""SELECT * FROM news WHERE 
-                               news_id=? LIMIT 1""", (news_id))
+        res = self.cur.execute(
+            """SELECT * FROM news WHERE news_id = ? LIMIT 1""", (news_id,))
         resp = res.fetchall()[0]
         answer = schemas.News(news_id=resp[0], title=resp[1],
                               image_id=resp[2], timestamp=resp[3], content=resp[4])
@@ -63,10 +62,10 @@ class DB:
 
     def get_city_by_id(self, city_id: int) -> schemas.City:
         city_res = self.cur.execute("""SELECT city_id, region_id, name 
-                                    FROM cities WHERE city_id=?""", (city_id))
+                                    FROM cities WHERE city_id=?""", (city_id,))
         resp = city_res.fetchall()[0]
         region_res = self.cur.execute("""SELECT name FROM regions 
-                                      WHERE region_id=?""", (resp[1]))
+                                      WHERE region_id=?""", (resp[1],))
         resp_region = city_res.fetchall()[0]
         answer = schemas.City(
             city_id=resp[0], region_id=resp[1], city_name=resp[2], region_name=resp_region[0])
@@ -86,7 +85,7 @@ class DB:
         answer = list()
         for row in res.fetchall():
             region_res = self.cur.execute("""SELECT name FROM regions
-                                          WHERE region_id=?""", (row[1]))
+                                          WHERE region_id=?""", (row[1],))
             region_name = region_res.fetchall()[0][0]
             answer.append(schemas.City(city_id=row[0], region_id=row[1],
                                        region_name=region_name, city_name=row[2]))
@@ -96,10 +95,10 @@ class DB:
 
     def get_cities_by_region_ID(self, region_id: int) -> list[schemas.City]:
         res = self.cur.execute("SELECT name FROM regions WHERE region_id=?",
-                               (region_id))
+                               (region_id,))
         region_name = res.fetchall()[0][0]
         res = self.cur.execute("SELECT city_id, name FROM cities WHERE region_id=?",
-                               (region_id))
+                               (region_id,))
         answer = list()
         for row in res.fetchall():
             answer.append(schemas.City(city_id=row[0], region_id=region_id,
@@ -108,14 +107,14 @@ class DB:
 
     def get_region_by_ID(self, region_id: int) -> schemas.Region:
         res = self.cur.execute("SELECT name from regions WHERE region_id=? LIMIT 1",
-                               (region_id))
+                               (region_id,))
         answer = schemas.Region(region_id=region_id,
                                 region_name=res.fetchall()[0][0])
         return answer
 
     def post_region(self, region_name: str) -> schemas.Region:
         res = self.cur.execute("INSERT INTO regions (name) VALUES (?)",
-                               (region_name))
+                               (region_name,))
         self.con.commit()
         res = self.cur.execute(
             "SELECT region_id FROM regions ORDER BY region_id DESC LIMIT 1")
@@ -126,7 +125,6 @@ class DB:
             "SELECT region_id, name from regions ORDER BY region_id DESC")
         answer = list()
         for row in res.fetchall():
-            print(row)
             answer.append(schemas.Region(region_id=row[0], region_name=row[1]))
         return answer
 
@@ -153,7 +151,7 @@ class DB:
         answer = list()
         for row in res.fetchall():
             res_images = self.cur.execute(
-                "SELECT image_id FROM places_and_images WHERE place_id=?", (row[0]))
+                "SELECT image_id FROM places_and_images WHERE place_id=?", (row[0],))
             image_id = res_images.fetchall()[0][0]
             answer.append(schemas.Place(place_id=row[0], title=row[1],
                                         city_id=row[2], image_id=image_id,
@@ -171,7 +169,7 @@ class DB:
         answer = list()
         for row in res.fetchall():
             res_images = self.cur.execute("""SELECT image_id FROM 
-                                          places_and_images WHERE place_id=?""", (row[0]))
+                                          places_and_images WHERE place_id=?""", (row[0],))
             image_id = res_images.fetchall()[0][0]
             answer.append(schemas.Place(place_id=row[0], title=row[1],
                                         city_id=row[2], image_id=image_id,
@@ -190,7 +188,7 @@ class DB:
                 OFFSET ?""", (city.city_id, count, offset))
             for row in res.fetchall():
                 res_images = self.cur.execute("""SELECT image_id FROM 
-                                places_and_images WHERE place_id=?""", (row[0]))
+                                places_and_images WHERE place_id=?""", (row[0],))
                 image_id = res_images.fetchall()[0][0]
                 answer.append(schemas.Place(place_id=row[0], title=row[1],
                                             city_id=row[2], image_id=image_id,
@@ -216,11 +214,10 @@ class DB:
         res = self.cur.execute(
             """SELECT place_id, title, city_id, youtube_id,
              content, latitude, longitude FROM places WHERE place_id=?""",
-            (place_id))
+            (place_id,))
         row = res.fetchall()[0]
-        res_images = self.cur.execute(
-            """SELECT image_id FROM places_and_images WHERE place_id=""",
-            (place_id))
+        res_images = self.cur.execute("""SELECT image_id FROM
+                            places_and_images WHERE place_id=?""", (place_id,))
         images = [row[0] for row in res_images.fetchall()]
         return schemas.PlaceImages(place_id=row[0], title=row[1], city_id=row[2],
                                    youtube_id=row[3], content=row[4],
@@ -237,7 +234,7 @@ class DB:
 
     def add_image(self, extension: str) -> schemas.ImageID:
         res = self.cur.execute("""INSERT INTO images (extension)
-                               VALUES (?)""", (extension))
+                               VALUES (?)""", (extension,))
         self.con.commit()
 
         res = self.cur.execute(
@@ -246,7 +243,7 @@ class DB:
 
     def get_extension(self, image_id: int) -> str:
         res = self.cur.execute("SELECT extension FROM images WHERE image_id=?",
-                               (image_id))
+                               (image_id,))
         return res.fetchall()[0][0]
 
     def place_and_images(self, place_id: int, image_id: int) -> None:

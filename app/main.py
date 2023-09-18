@@ -17,11 +17,13 @@ prefics = '/v1'
 # TODO: token: Annotated[str, Depends(oauth2_scheme)]
 @app.post(prefics + "/news/add", tags=["News"])
 async def post_news(add_news: schemas.AddNews) -> schemas.NewsID:
+    """Post new news."""
     return database.post_news(add_news.title, add_news.image_id, add_news.content)
 
 
 @app.get(prefics + "/news", tags=["News"])
 async def get_news(count: int, offset: int = 0) -> list[schemas.News]:
+    """Get latest news."""
     return database.get_news(count, offset)
 
 
