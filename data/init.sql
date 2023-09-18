@@ -1,12 +1,15 @@
 CREATE TABLE IF NOT EXISTS images (
     image_id INTEGER PRIMARY KEY AUTOINCREMENT,
     extension VARCHAR(10) NOT NULL,
-    place_id INTEGER
+    place_id INTEGER,
+    FOREIGN KEY (place_id) REFERENCES places (place_id)
 );
 
 CREATE TABLE IF NOT EXISTS places_and_images (
     place_id INTEGER NOT NULL,
-    image_id INTEGER NOT NULL
+    image_id INTEGER NOT NULL,
+    FOREIGN KEY (place_id) REFERENCES places (place_id),
+    FOREIGN KEY (image_id) REFERENCES images (image_id)
 );
 
 CREATE TABLE IF NOT EXISTS user (
@@ -17,13 +20,14 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS regions (
     region_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS cities (
     city_id INTEGER PRIMARY KEY AUTOINCREMENT,
     region_id INTEGER NOT NULL,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    FOREIGN KEY (region_id) REFERENCES regions (region_id)
 );
 
 CREATE TABLE IF NOT EXISTS news (
@@ -31,7 +35,8 @@ CREATE TABLE IF NOT EXISTS news (
     title TINYTEXT NOT NULL,
     image_id INT NOT NULL,
     creation_time TIMESTAMP NOT NULL,
-    content MEDIUMTEXT
+    content MEDIUMTEXT,
+    FOREIGN KEY (image_id) REFERENCES images (image_id)
 );
 
 CREATE TABLE IF NOT EXISTS places (
@@ -41,5 +46,6 @@ CREATE TABLE IF NOT EXISTS places (
     youtube_id VARCHAR(128),
     latitude DOUBLE NOT NULL,
     longitude DOUBLE NOT NULL,
-    content MEDIUMTEXT
+    content MEDIUMTEXT,
+    FOREIGN KEY (city_id) REFERENCES cities (city_id)
 );
