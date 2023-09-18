@@ -1,16 +1,27 @@
 from fastapi import FastAPI, File, UploadFile, Depends
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import FileResponse
-from typing import Annotated
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import DB
 from app import schemas
+
 
 
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
 database = DB()
 prefics = '/v1'
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # News
